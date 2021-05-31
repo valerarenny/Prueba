@@ -28,11 +28,14 @@ namespace EtechApi.DAO
 
         public Viajero EditViajero(Viajero viajero)
         {
+            ViajesDBRestContext contextDB = new ViajesDBRestContext();
             var viajeroExistente = GetViajero(viajero.IdViajero);
             viajeroExistente.Nombre = viajero.Nombre;
             viajeroExistente.Apellido = viajero.Apellido;
             viajeroExistente.Cedula = viajero.Cedula;
             viajeroExistente.Telefono = viajero.Telefono;
+            contextDB.Viajeros.Update(viajero);
+            contextDB.SaveChangesAsync();
 
             return viajeroExistente;
         }

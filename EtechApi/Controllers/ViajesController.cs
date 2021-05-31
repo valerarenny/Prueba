@@ -19,36 +19,33 @@ namespace EtechApi.Controllers
                 _viajesDAO = viajes;
             }
 
-            [HttpGet]
-            [Route("api/[controller]")]
-            public IActionResult GetViajes()
-            {
-                return Ok(_viajesDAO.GetViajes());
-            }
+        [HttpGet]
+        [Route("api/[controller]")]
+        public IActionResult GetViajes()
+        {
+           return Ok(_viajesDAO.GetViajes());
+        }
 
-            [HttpGet]
-            [Route("api/[controller]/{id}")]
-            public IActionResult GetViaje(Guid id)
-            {
-                var viaje = _viajesDAO.GetViaje(id);
+        [HttpGet]
+        [Route("api/[controller]/{id}")]
+        public IActionResult GetViaje(Guid id)
+        {
+           var viaje = _viajesDAO.GetViaje(id);
 
-                if (viaje != null)
-                {
-                    return Ok(_viajesDAO.GetViaje(id));
-                }
+           if (viaje != null)
+           {
+                return Ok(_viajesDAO.GetViaje(id));
+           }
+           return NotFound($"Viaje con codigo:{id} no ha sido encontrado");
+        }
 
-                return NotFound($"Viaje con codigo:{id} no ha sido encontrado");
-            }
-
-            [HttpPost]
-            [Route("api/[controller]")]
-            public IActionResult GetViaje(Viaje viaje)
-            {
-                _viajesDAO.AddViaje(viaje);
-
-                return Created(HttpContext.Request.Scheme + "://" + HttpContext.Request.Host + HttpContext.Request.Path + "/" + viaje.IdViaje, viaje);
-
-            }
+        [HttpPost]
+        [Route("api/[controller]")]
+        public IActionResult GetViaje(Viaje viaje)
+        {
+           _viajesDAO.AddViaje(viaje);
+           return Created(HttpContext.Request.Scheme + "://" + HttpContext.Request.Host + HttpContext.Request.Path + "/" + viaje.IdViaje, viaje);
+        }
 
         [HttpDelete]
         [Route("api/[controller]/{id}")]
@@ -58,12 +55,9 @@ namespace EtechApi.Controllers
             if (viaje != null)
             {
                _viajesDAO.DeleteViaje(viaje);
-
                 return Ok($"Viaje con codigo:{id} borrado con exito");
             }
-
-            return NotFound($"Viaje con codigo:{id} no ha sido encontrado");          
-
+            return NotFound($"Viaje con codigo:{id} no ha sido encontrado");        
         }
         [HttpPut]
         [Route("api/[controller]/{id}")]
@@ -73,11 +67,10 @@ namespace EtechApi.Controllers
             if (viajeExistente != null)
             {
                 viaje.IdViaje = viajeExistente.IdViaje;
-                _viajesDAO.EditViaje(viaje);
+                Viaje viajeupdated = _viajesDAO.EditViaje(viaje);
+                return Ok(viajeupdated);
             }
-
             return Ok(viaje);
-
         }
 
         //[HttpGet]

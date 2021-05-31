@@ -38,7 +38,7 @@ namespace EtechApi.Controllers
                 return Ok(_viajerosDAO.GetViajero(id));
             }
 
-            return NotFound($"Viaje con codigo:{id} no ha sido encontrado");
+            return NotFound($"Viajero con codigo:{id} no ha sido encontrado");
         }
 
         [HttpPost]
@@ -60,13 +60,13 @@ namespace EtechApi.Controllers
             {
                 _viajerosDAO.DeleteViajero(viajero);
 
-                return Ok($"Viaje con codigo:{id} borrado con exito");
+                return Ok($"Viajero con codigo:{id} borrado con exito");
             }
 
-            return NotFound($"Viaje con codigo:{id} no ha sido encontrado");
+            return NotFound($"Viajero con codigo:{id} no ha sido encontrado");
 
         }
-        [HttpPatch]
+        [HttpPut]
         [Route("api/[controller]/{id}")]
         public IActionResult EditViajero(Guid id, Viajero viajero)
         {

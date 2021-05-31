@@ -28,12 +28,14 @@ namespace EtechApi.DAO
 
         public Viaje EditViaje(Viaje viaje)
         {
+            ViajesDBRestContext contextDB = new ViajesDBRestContext();
             var viajeExistente = GetViaje(viaje.IdViaje);
             viajeExistente.Destino = viaje.Destino;
             viajeExistente.Nplazas = viaje.Nplazas;
             viajeExistente.Origen = viaje.Origen;
             viajeExistente.Precio = viaje.Precio;
-
+            contextDB.Viajes.Update(viajeExistente);
+            contextDB.SaveChangesAsync();
             return viajeExistente;
         }
 

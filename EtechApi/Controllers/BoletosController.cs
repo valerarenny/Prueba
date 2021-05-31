@@ -66,15 +66,17 @@ namespace EtechApi.Controllers
             return NotFound($"Viaje con codigo:{id} no ha sido encontrado");
 
         }
-        [HttpPatch]
+        [HttpPut]
         [Route("api/[controller]/{id}")]
-        public IActionResult EditViajero(string id, Boleto boleto)
-        {
+        public IActionResult EditBoleto(string id, Boleto boleto)        {
+            
             var viajeroExistente = _boletosDAO.GetBoleto(id);
+
             if (viajeroExistente != null)
             {
                 boleto.IdViajero = viajeroExistente.IdViajero;
-                _boletosDAO.EditBoleto(boleto);
+                Boleto boletoupdated =_boletosDAO.EditBoleto(boleto);
+                return Ok(boletoupdated);
             }
 
             return Ok(boleto);

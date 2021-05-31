@@ -1,0 +1,282 @@
+﻿
+@{
+    ViewBag.Title = "Viajes";
+}
+
+<div>   
+    <div>
+        <div id="viajes">
+            <h3>Crear Viajes</h3>
+            <div class="form-group">
+                <form class="form-inline" id="viajesForm">
+                    <label class="form-group">Numero de plazas</label>
+                    <input name="nplazas" type="text" class="form-control" />
+                    <label class="form-group">Destino</label>
+                    <input name="destino" type="text" class="form-control" />
+                    <label class="form-group">Origen</label>
+                    <input name="origen" type="text" class="form-control" />
+                    <label class="form-group">Precio</label>
+                    <input name="precio" type="text" class="form-control" />
+                    <br>
+                    <button class="btn btn-primary" id="crearviajes">Enviar</button>
+                </form>
+            </div>
+            <h3>Viajes</h3>
+            <table class="table" id="tableViaje">
+                <thead>
+                    <tr>
+                        <td><strong>Id Viaje</strong></td>
+                        <td><strong>Plazas</strong></td>
+                        <td><strong>Destino</strong></td>
+                        <td><strong>Origen</strong></td>
+                        <td><strong>Precio</strong></td>
+                        <td><strong>Opcion</strong></td>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>      
+    </div>
+</div>
+
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Editar Viajes</h4>
+            </div>
+            <div class="container modal-body">
+                <form class="form-horizontal" id="viajesModal">                                     
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="nplazasmodal">Numero de plazas</label>
+                        <div class="col-sm-10">
+                            <input id="nplazasmodal" name="nplazas" type="text" class="modalinput form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="destinomodal">Destino</label>
+                        <div class="col-sm-10">
+                            <input id="destinomodal" name="destino" type="text" class="modalinput form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="origenmodal">Origen</label>
+                        <div class="col-sm-10">
+                            <input id="origenmodal" name="origen" type="text" class="modalinput form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="preciomodal">Precio</label>
+                        <div class="col-sm-10">
+                            <input id="preciomodal" name="precio" type="text" class="modalinput form-control" />
+                        </div>
+                    </div>
+
+                    <br>
+                    <button class="btn btn-primary" id="editarViajesBtn">Enviar</button>
+                </form>
+                <div>
+                    <p id="errorModal">
+                        <span class="text-danger"><strong>*Debe llenar todos los campos</strong></span>
+                    </p>
+                </div>
+            </div>
+
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script type="text/javascript">
+        let GetViajesTable;
+        $(document).ready(function () {
+            GetViajesTable = function() {
+                var ajaxCall = $.get('/Viajes/Viajes', function (data) {
+                    console.log("success");
+                });
+
+                ajaxCall.done(function (data) {
+                    console.log("success");
+                    console.log(data);
+                    var datajson = data;
+                    console.log(datajson)                     
+
+                    var table = $("#tableViaje tbody");
+                    table.html('');
+                    $.each(datajson, function (indx, value) {
+                        table.append("<tr><td>" + value.idViaje + "</td><td>" + value.nplazas + "</td><td>" + value.origen +
+                            "</td><td>" + value.destino + "</td><td>" + value.precio + "</td><td>" +
+                            '<button class="edit"><a class="glyphicon glyphicon-eye-open" data-toggle="modal"></a></button><button id="hola" class="delete"><a class="glyphicon glyphicon-trash" data - toggle="modal"></a></button></td>');
+                    });
+
+                });
+                ajaxCall.fail(function (data) {
+                    console.log("failed");
+                });
+            }
+            GetViajesTable();
+        });
+
+        $('table').on('click', '.delete', function (e) {
+
+            e.preventDefault();
+            var childrenTd = $(this).parentsUntil("tbody");
+            $(this).parentsUntil("tbody").remove();
+            var idvalue = $(childrenTd).children("td")[0].textContent;
+            console.log(idvalue);
+            var data = {
+                IdGuid: idvalue
+            }
+            var ajaxDelete = $.ajax({
+                type: "POST",
+                url: "/Viajes/ViajesDelete",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json"
+            });
+
+            ajaxDelete.done(function () {
+                $(this).parentsUntil('thead').remove();
+            })
+        });
+        let ViajeGUI;
+        $('table').on('click', '.edit', function (e) {
+            e.preventDefault();
+
+            var childrenTd = $(this).parentsUntil("tbody");
+            var idvalue = $(childrenTd).children("td")[0].textContent;
+
+            var data = {
+                IdGuid: idvalue
+            }
+            var ajaxGetviaje = $.ajax({
+                type: "POST",
+                url: "/Viajes/GetViaje",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json"
+            });
+
+            ajaxGetviaje.done(function (data) {
+                console.log(data);
+                var $resultdata = data;
+                var inputs = $("#viajesModal :input");
+                $.each($resultdata, function (index, value) {
+                    console.log($resultdata[index]);
+                    inputs = $resultdata;
+                    console.log(inputs[index]);
+                })
+                console.log(inputs);
+
+                ViajeGUI = inputs.idViaje;
+                var nplazas = inputs.nplazas;
+                var destino = inputs.destino;
+                var origen = inputs.origen;
+                var precio = inputs.precio;
+
+                $("#nplazasmodal").val(nplazas);
+                $("#destinomodal").val(destino);
+                $("#origenmodal").val(origen);
+                $("#preciomodal").val(precio);
+
+                $("#myModal").modal();
+            })
+
+
+
+            console.log(idvalue);
+            var nplazasval = $('#nplazasmodal').val();
+            var destinoval = $('#destinomodal').val();
+            var origenval = $('#origenmodal').val();
+            var precioval = $('#preciomodal').val();
+
+
+            var data = {
+                IdGuid: idvalue,
+                Viaje: {
+                    nplazas: nplazasval,
+                    destino: destinoval,
+                    origen: origenval,
+                    precio: precioval
+                }
+            }
+            console.log(data);
+        });
+
+        $("#editarViajesBtn").click(function (e) {
+            e.preventDefault();
+
+            if ($("#nplazasmodal").val() == "" || $("#destinomodal").val() == "" || $("#origenmodal").val() == "" || $("#preciomodal").val() == "") {
+                $("#errorModal").show();
+            } else {
+                var nplazasval = $('#nplazasmodal').val();
+                var destinoval = $('#destinomodal').val();
+                var origenval = $('#origenmodal').val();
+                var precioval = $('#preciomodal').val();
+                var viajeRequest = {
+                    IdG: {
+                        IdGuid : ViajeGUI
+                    },
+                    Viaje : {
+                        nplazas: nplazasval,
+                        destino: destinoval,
+                        origen: origenval,
+                        precio: precioval
+                    }
+
+                }
+            }
+            console.log(viajeRequest);
+                var ajaxEditSend = $.ajax({
+                    type: "POST",
+                    url: "/Viajes/ViajesEdit",
+                    data: JSON.stringify(viajeRequest),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                });
+
+            ajaxEditSend.done(function (data) {                
+                $("#myModal").modal("hide");
+                GetViajesTable();
+                
+              })          
+
+        })
+
+        $('#crearviajes').click(function (e) {
+            e.preventDefault();
+
+            var nplazasval = $('#viajesForm input[name="nplazas"]').val();
+            var destinoval = $('#viajesForm input[name="destino"]').val();
+            var origenval = $('#viajesForm input[name="origen"]').val();
+            var precioval = $('#viajesForm input[name="precio"]').val();
+
+            var data = {
+                nplazas: nplazasval,
+                destino: destinoval,
+                origen: origenval,
+                precio: precioval
+            }
+
+            console.log(data);
+
+           var createViaje = $.ajax({
+                type: "POST",
+               url: "/Viajes/Create",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json"
+           });
+            createViaje.done(function (data) {
+                GetViajesTable();
+            });
+        });
+    </script>
+    }

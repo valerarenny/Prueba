@@ -1,0 +1,319 @@
+﻿
+@{
+    ViewBag.Title = "Viajes";
+}
+
+<div>
+    <div>
+        <div class="col-12"  id="viajes">
+            <h3>Crear Viajeros</h3>
+            <div class="form-group">
+                <form class="col-12 form" id="viajerosForm">
+                    <div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label class="form-group">Nombre</label>
+                                <div class="col-12">
+                                    <input name="nombre" type="text" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-group">Apellido</label>
+                                <div class="col-12">
+                                    <input name="apellido" type="text" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label class="form-group">Cédula</label>
+                                <div class="col-12">
+                                    <input name="cedula" type="text" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-group">Teléfono</label>
+                                <div class="col-12">
+                                    <input name="telefono" type="text" class="form-control" />
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="form-group">Dirección</label>
+                            <div class="col-12">
+                                <input name="direccion" type="text" class="form-control" />
+                            </div>
+                        </div>
+                    </div>                   
+                 
+                    <br>
+                    <button class="btn btn-primary" id="crearviajeros">Enviar</button>
+                </form>
+            </div>
+            <h3>Viajeros</h3>
+            <table class="table" id="tableViajeros">
+                <thead>
+                    <tr>
+                        <td><strong>Id Viajero</strong></td>
+                        <td><strong>Nombre</strong></td>
+                        <td><strong>Apellido</strong></td>
+                        <td><strong>Cédula</strong></td>
+                        <td><strong>Teléfono</strong></td>
+                        <td><strong>Dirección</strong></td>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Editar Viajero</h4>
+            </div>
+            <div class="container modal-body">
+                <form class="form-horizontal" id="viajerosModal">
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="nombremodal">Nombre</label>
+                        <div class="col-sm-10">
+                            <input id="nombremodal" name="nombre" type="text" class="modalinput form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="apellidomodal">Apellido</label>
+                        <div class="col-sm-10">
+                            <input id="apellidomodal" name="apellido" type="text" class="modalinput form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="cedulamodal">Cédula</label>
+                        <div class="col-sm-10">
+                            <input id="cedulamodal" name="cedula" type="text" class="modalinput form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="telefonomodal">Teléfono</label>
+                        <div class="col-sm-10">
+                            <input id="telefonomodal" name="telefono" type="text" class="modalinput form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="direccionModal">Dirección</label>
+                        <div class="col-sm-10">
+                            <input id="direccionmodal" name="direccion" type="text" class="modalinput form-control" />
+                        </div>
+                    </div>
+
+                    <br>
+                    <button class="btn btn-primary" id="editarViajeroBtn">Enviar</button>
+                </form>
+                <div>
+                    <p id="errorModal">
+                        <span class="text-danger"><strong>*Debe llenar todos los campos</strong></span>
+                    </p>
+                </div>
+            </div>
+
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script type="text/javascript">
+        let GetViajerosTable;
+        $(document).ready(function () {
+            GetViajerosTable = function() {
+                var ajaxCall = $.get('/Viajeros/Viajeros', function (data) {
+                    console.log("success");
+                });
+
+                ajaxCall.done(function (data) {
+                    console.log("success");
+                    console.log(data);
+                    var datajson = data;
+                    console.log(datajson)
+
+                    var table = $("#tableViajeros tbody");
+                    table.html('');
+                    $.each(datajson, function (indx, value) {
+                        table.append("<tr><td>" + value.IdViajero + "</td><td>" + value.nombre + "</td><td>" + value.apellido + "</td><td>" + value.cedula +
+                            "</td><td>" + value.telefono + "</td><td>" + value.direccion + "</td><td>" +
+                            '<button class="edit"><a class="glyphicon glyphicon-eye-open" data-toggle="modal"></a></button><button id="hola" class="delete"><a class="glyphicon glyphicon-trash" data - toggle="modal"></a></button></td>');
+                    });
+
+                });
+                ajaxCall.fail(function (data) {
+                    console.log("failed");
+                });
+            }
+            GetViajerosTable();
+        });
+
+        $('table').on('click', '.delete', function (e) {
+
+            e.preventDefault();
+            var childrenTd = $(this).parentsUntil("tbody");
+            $(this).parentsUntil("tbody").remove();
+            var idvalue = $(childrenTd).children("td")[0].textContent;
+            console.log(idvalue);
+            var data = {
+                IdGuid: idvalue
+            }
+            var ajaxDelete = $.ajax({
+                type: "POST",
+                url: "/Viajeros/ViajerosDelete",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json"
+            });
+
+            ajaxDelete.done(function () {
+                $(this).parentsUntil('thead').remove();
+            })
+        });
+        let ViajeGUI;
+        $('table').on('click', '.edit', function (e) {
+            e.preventDefault();
+
+            var childrenTd = $(this).parentsUntil("tbody");
+            var idvalue = $(childrenTd).children("td")[0].textContent;
+
+            var data = {
+                IdGuid: idvalue
+            }
+            var ajaxGetviaje = $.ajax({
+                type: "POST",
+                url: "/Viajeros/GetViaje",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json"
+            });
+
+            ajaxGetviaje.done(function (data) {
+                console.log(data);
+                var $resultdata = data;
+                var inputs = $("#viajerosModal :input");
+                $.each($resultdata, function (index, value) {
+                    console.log($resultdata[index]);
+                    inputs = $resultdata;
+                    console.log(inputs[index]);
+                })
+                console.log(inputs);
+
+                ViajeGUI = inputs.IdViajero;
+                var nombre = inputs.nombre;
+                var apellido = inputs.apellido;
+                var cedula = inputs.cedula;
+                var telefono = inputs.telefono;
+                var direccion = inputs.direccion;
+
+                $("#nombremodal").val(nombre);
+                $("#apellidomodal").val(apellido);
+                $("#cedulamodal").val(cedula);
+                $("#telefonomodal").val(telefono);
+                $("#direccionmodal").val(direccion);
+
+                $("#myModal").modal();
+            })
+            console.log(idvalue);
+            var nplazasval = $('#nplazasmodal').val();
+            var destinoval = $('#destinomodal').val();
+            var origenval = $('#origenmodal').val();
+            var precioval = $('#preciomodal').val();
+
+
+            var data = {
+                IdGuid: idvalue,
+                Viaje: {
+                    nplazas: nplazasval,
+                    destino: destinoval,
+                    origen: origenval,
+                    precio: precioval
+                }
+            }
+            console.log(data);
+        });
+
+        $("#editarViajeroBtn").click(function (e) {
+            e.preventDefault();
+
+            if ($("#nombremodal").val() == "" || $("#apellidomodal").val() == "" || $("#cedulamodal").val() == "" || $("#telefonomodal").val() == "" || $("#direccionmodal").val() == "") {
+                $("#errorModal").show();
+            } else {
+                var nombreval = $('#nombremodal').val();
+                var apellidoval = $('#apellidomodal').val();
+                var cedulaval = $('#cedulamodal').val();
+                var telefonoval = $('#telefonomodal').val();
+                var direccionval = $('#direccionmodal').val();
+                var viajerosRequest = {
+                    IdG: {
+                        IdGuid : ViajeGUI
+                    },
+                    Viajero : {
+                        nombre: nombreval,
+                        apellido: apellidoval,
+                        cedula: cedulaval,
+                        telefono: telefonoval,
+                        direccion: direccionval
+                    }
+
+                }
+            }
+            console.log(viajerosRequest);
+                var ajaxEditSend = $.ajax({
+                    type: "POST",
+                    url: "/Viajeros/ViajerosEdit",
+                    data: JSON.stringify(viajerosRequest),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                });
+
+            ajaxEditSend.done(function (data) {
+                $("#myModal").modal("hide");
+                GetViajerosTable();
+              })
+
+        })
+
+        $('#crearviajeros').click(function (e) {
+            e.preventDefault();
+
+            var nombreval = $('#viajerosForm input[name="nombre"]').val();
+            var apellidoval = $('#viajerosForm input[name="apellido"]').val();
+            var cedulaval = $('#viajerosForm input[name="cedula"]').val();
+            var telefonoval = $('#viajerosForm input[name="telefono"]').val();
+            var direccionval = $('#viajerosForm input[name="direccion"]').val();
+
+            var data = {
+                nombre: nombreval,
+                apellido: apellidoval,
+                cedula: cedulaval,
+                telefono: telefonoval,
+                direccion: direccionval
+            }
+            console.log(data);
+
+           var createViaje = $.ajax({
+                type: "POST",
+               url: "/Viajeros/Create",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json"
+           });
+            createViaje.done(function (data) {
+                GetViajerosTable();
+            });
+        });
+    </script>
+}
